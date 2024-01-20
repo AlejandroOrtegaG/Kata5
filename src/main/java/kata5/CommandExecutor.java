@@ -1,7 +1,7 @@
 package kata5;
 
-import com.sun.net.httpserver.Request;
-import org.eclipse.jetty.client.api.Response;
+import spark.Request;
+import spark.Response;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,5 +15,19 @@ public class CommandExecutor {
     public CommandExecutor(Request request, Response response) {
         this.request = request;
         this.response = response;
+    }
+
+    public static CommandExecutor with(Request request, Response response){
+        return new CommandExecutor(request,response);
+    }
+
+    public static void put(String name, Command command){
+        commands.put(name,command);
+    }
+
+    public String execute(String name){
+        Command.Output output = commands.get(name).execute(request::queryParams);
+        response.status(output.response());
+        return output.result();
     }
 }
